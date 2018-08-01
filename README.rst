@@ -473,6 +473,11 @@ Short Field Names
         }
     }
 
+*****************
+API Documentation
+*****************
+Can you can find the API documentation `here <https://aws-iot-device-defender-agent-sdk.readthedocs.io/en/latest/>`__
+
 **********
 References
 **********
