@@ -217,8 +217,9 @@ class Metrics(object):
             metrics[t.interface_stats] = self.network_stats
 
         if self._net_connections:
-            metrics[t.tcp_conn] = {t.connections: self._sample_list(self._net_connections),
-                                   t.total: len(self._net_connections)}
+            metrics[t.tcp_conn] = {t.established_connections: {t.connections: self._sample_list(self._net_connections),
+                                                               t.total: len(self._net_connections)}}
+
         if self.listening_tcp_ports:
             metrics[t.listening_tcp_ports] = {t.ports: self._sample_list(self.listening_tcp_ports),
                                               t.total: len(self.listening_tcp_ports)}

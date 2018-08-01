@@ -21,7 +21,8 @@ class Tags(object):
     REPORT_ID = ("report_id", "rid")
     VERSION = ("version", "v")
     TCP_CONN = ("tcp_connections", "tc")
-    CONNECTIONS = ("established_connections", "ec")
+    ESTABLISHED_CONNECTIONS = ("established_connections", "ec")
+    CONNECTIONS = ("connections", "cs")
     REMOTE_ADDR = ("remote_addr", "rad")
     REMOTE_PORT = ("remote_port", "rp")
     LOCAL_PORT = ("local_port", "lp")
@@ -70,6 +71,10 @@ class Tags(object):
     @property
     def connections(self):
         return self.get(self.CONNECTIONS)
+
+    @property
+    def established_connections(self):
+        return self.get(self.ESTABLISHED_CONNECTIONS)
 
     @property
     def remote_addr(self):

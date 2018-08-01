@@ -138,9 +138,11 @@ def test_v1_sampled_lists(simple_metric):
     report = simple_metric._v1_metrics()
     metric_block = report[t.metrics]
 
-    assert len(metric_block[t.tcp_conn][t.connections]) == 10
-    assert metric_block[t.tcp_conn][t.total] > len(
-        metric_block[t.tcp_conn][t.connections])
+    assert len(metric_block[t.tcp_conn][t.established_connections][t.connections]) == 10
+
+    assert metric_block[t.tcp_conn][t.established_connections][t.total] > len(
+        metric_block[t.tcp_conn][t.established_connections])
+
     assert len(metric_block[t.listening_tcp_ports][t.ports]) == 10
     assert metric_block[t.listening_tcp_ports][t.total] > len(
         metric_block[t.listening_tcp_ports][t.ports])
@@ -254,4 +256,4 @@ def test_sampled_lists(simple_metric):
     metric_block = report[t.metrics]
     assert len(metric_block[t.listening_tcp_ports][t.ports]) == 10
     assert len(metric_block[t.listening_udp_ports][t.ports]) == 10
-    assert len(metric_block[t.tcp_conn][t.connections]) == 10
+    assert len(metric_block[t.tcp_conn][t.established_connections][t.connections]) == 10
