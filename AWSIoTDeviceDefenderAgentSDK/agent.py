@@ -66,8 +66,8 @@ class IoTClientWrapper(object):
         stream_handler.setFormatter(formatter)
         logger.addHandler(stream_handler)
 
-        self.iot_client = AWSIoTMQTTClient(self.client_id, useWebsocket=True)
-        self.iot_client.configureEndpoint(self.host, 443)
+        self.iot_client = AWSIoTMQTTClient(self.client_id)
+        self.iot_client.configureEndpoint(self.host, 8883)
         self.iot_client.configureCredentials(
             self.root_ca_path, self.private_key_path, self.certificate_path)
 
