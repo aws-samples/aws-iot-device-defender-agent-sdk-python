@@ -1,0 +1,4 @@
+AWSIoTPythonSDK==1.4.0
+cbor==1.0.0
+pkg-resources==0.0.0
+psutil==5.4.7
