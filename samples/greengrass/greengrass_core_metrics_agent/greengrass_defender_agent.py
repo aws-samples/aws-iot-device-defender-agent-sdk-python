@@ -11,12 +11,15 @@
 #   express or implied. See the License for the specific language governing
 #   permissions and limitations under the License.
 
-import logging
-from time import sleep
 import greengrasssdk
+import logging
+import os
 import psutil as ps
+from time import sleep
 
 from AWSIoTDeviceDefenderAgentSDK import collector
+
+MIN_INTERVAL_SECONDS = 300 # minimum sample interval at which metrics messages can be published
 
 # Configure logging
 logger = logging.getLogger("AWSIoTPythonSDK.core")
@@ -26,31 +29,34 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 streamHandler.setFormatter(formatter)
 logger.addHandler(streamHandler)
 
-# You will need to use Local Resource Access to map the hosts /proc to a directory accessible in the lambda
-ps.PROCFS_PATH = "/host_proc"
 client = greengrasssdk.client('iot-data')
-THING_NAME = "GREENGRASS_CORE_NAME"  # Thing name is the same as Greengrass Core Name
-SAMPLE_RATE_SECONDS = 300  # 5 minute metrics
-
 
 def function_handler(event, context):
     print "Lambda got event: " + str(event) + " context:" + str(context)
 
-
 def publish_metrics():
-    # thing name must match a registered thing name in your account
-    topic = "$aws/things/" + THING_NAME + "/defender/metrics/json"
-
     try:
-        metrics_collector = collector.Collector(short_metrics_names=False)
-        while True:
+    # You will need to use Local Resource Access to map the hosts /proc to a directory accessible in the lambda
+    ps.PROCFS_PATH = os.environ['PROCFS_PATH']
+    core_name = os.environ['AWS_IOT_THING_NAME']
+    topic = "$aws/things/" + core_name + "/defender/metrics/json"
 
-            metric = metrics_collector.collect_metrics()
-            client.publish(
-                topic=topic,
-                payload=metric.to_json_string())
+    sample_interval_seconds = os.environ['SAMPLE_INTERVAL_SECONDS']
+    if sample_interval_seconds < MIN_INTERVAL_SECONDS:
+        sample_interval_seconds = MIN_INTERVAL_SECONDS
 
-            sleep(float(SAMPLE_RATE_SECONDS))
+    print "Collector running on device: " + core_name
+    print "Metrics topic: " + topic
+    print "Sampling interval: " + sample_interval_seconds + " seconds"
+
+    metrics_collector = collector.Collector(short_metrics_names=False)
+    while True:
+
+        metric = metrics_collector.collect_metrics()
+        client.publish(
+            topic=topic,
+            payload=metric.to_json_string())
+        sleep(float(sample_interval_seconds))
 
     except Exception as e:
         print "Error: " + str(e)
