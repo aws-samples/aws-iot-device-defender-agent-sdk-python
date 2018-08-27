@@ -36,27 +36,27 @@ def function_handler(event, context):
 
 def publish_metrics():
     try:
-    # You will need to use Local Resource Access to map the hosts /proc to a directory accessible in the lambda
-    ps.PROCFS_PATH = os.environ['PROCFS_PATH']
-    core_name = os.environ['AWS_IOT_THING_NAME']
-    topic = "$aws/things/" + core_name + "/defender/metrics/json"
+        # You will need to use Local Resource Access to map the hosts /proc to a directory accessible in the lambda
+        ps.PROCFS_PATH = os.environ['PROCFS_PATH']
+        core_name = os.environ['AWS_IOT_THING_NAME']
+        topic = "$aws/things/" + core_name + "/defender/metrics/json"
 
-    sample_interval_seconds = os.environ['SAMPLE_INTERVAL_SECONDS']
-    if sample_interval_seconds < MIN_INTERVAL_SECONDS:
-        sample_interval_seconds = MIN_INTERVAL_SECONDS
+        sample_interval_seconds = os.environ['SAMPLE_INTERVAL_SECONDS']
+        if sample_interval_seconds < MIN_INTERVAL_SECONDS:
+            sample_interval_seconds = MIN_INTERVAL_SECONDS
 
-    print "Collector running on device: " + core_name
-    print "Metrics topic: " + topic
-    print "Sampling interval: " + sample_interval_seconds + " seconds"
+        print "Collector running on device: " + core_name
+        print "Metrics topic: " + topic
+        print "Sampling interval: " + sample_interval_seconds + " seconds"
 
-    metrics_collector = collector.Collector(short_metrics_names=False)
-    while True:
+        metrics_collector = collector.Collector(short_metrics_names=False)
+        while True:
 
-        metric = metrics_collector.collect_metrics()
-        client.publish(
-            topic=topic,
-            payload=metric.to_json_string())
-        sleep(float(sample_interval_seconds))
+            metric = metrics_collector.collect_metrics()
+            client.publish(
+                topic=topic,
+                payload=metric.to_json_string())
+            sleep(float(sample_interval_seconds))
 
     except Exception as e:
         print "Error: " + str(e)
