@@ -201,6 +201,11 @@ Configure and deploy your Greengrass Lambda
 #. `Upload your lambda zip file <https://docs.aws.amazon.com/greengrass/latest/developerguide/package.html>`__
 #. Select the Python 2.7 runtime, and enter ``greengrass_defender_agent.function_handler`` in the Handler field
 #. `Configure your lambda as a long-lived lambda <https://docs.aws.amazon.com/greengrass/latest/developerguide/long-lived.html>`__
+#. Configure the following environment variables:
+
+   * **SAMPLE_INTERVAL_SECONDS:** The metrics generation interval. This defaults to 300 seconds if any value less than 300 is configured
+   * **PROCFS_PATH:** The destination path that you will configure for your **/proc** resource as shown below.
+
 #. `Configure a subscription from your lambda to the AWS IoT Cloud <https://docs.aws.amazon.com/greengrass/latest/developerguide/config_subs.html>`__
    *Note: For AWS IoT Device Defender, a subscription from AWS IoT Cloud to your lambda is not required*
 #. Create a local resource to allow your lambda to collect metrics from the Greengrass Core host
@@ -211,7 +216,7 @@ Configure and deploy your Greengrass Lambda
      * **Resource Name:** ``Core Proc``
      * **Type:** ``Volume``
      * **Source Path:** ``/proc``
-     * **Destination Path:** ``/host_proc``
+     * **Destination Path:** ``/host_proc`` (make sure the same value is configured for the PROCFS_PATH environment variable above)
      * Group owner file access permission: "Automatically add OS group permissions of the Linux group that owns the resource"
      * Associate the resource with your metrics lambda
 
