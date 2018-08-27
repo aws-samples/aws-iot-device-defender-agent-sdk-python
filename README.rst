@@ -173,13 +173,6 @@ For this portion will be following the general process outlined
 
        cp ../aws-iot-device-defender-agent-sdk-python/samples/greengrass/greengrass_core_metrics_agent/greengrass_defender_agent.py .
 
-#. Customize the Greengrass agent to include the name of your Greengrass
-   Core device, and the desired metrics sample rate
-
-   -  Replace ``GREENGRASS_CORENAME`` with the name of your Greengrass Core
-   -  Set the ``SAMPLE_RATE_SECONDS`` to your desired metrics reporting interval
-      *Note: 5 minutes (300 seconds) is the shortest reporting interval supported by AWS IoT Device Defender*
-
 #. Copy the dependencies from your virtual environment or your system, into the the root level of your lambda
 
    .. code:: bash
@@ -203,7 +196,8 @@ Configure and deploy your Greengrass Lambda
 #. `Configure your lambda as a long-lived lambda <https://docs.aws.amazon.com/greengrass/latest/developerguide/long-lived.html>`__
 #. Configure the following environment variables:
 
-   * **SAMPLE_INTERVAL_SECONDS:** The metrics generation interval. This defaults to 300 seconds if any value less than 300 is configured
+   * **SAMPLE_INTERVAL_SECONDS:** The metrics generation interval. This defaults to 300 seconds
+     *Note: 5 minutes (300 seconds) is the shortest reporting interval supported by AWS IoT Device Defender*
    * **PROCFS_PATH:** The destination path that you will configure for your **/proc** resource as shown below.
 
 #. `Configure a subscription from your lambda to the AWS IoT Cloud <https://docs.aws.amazon.com/greengrass/latest/developerguide/config_subs.html>`__
