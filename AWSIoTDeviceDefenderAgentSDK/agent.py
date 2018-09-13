@@ -36,12 +36,7 @@ class IoTClientWrapper(object):
         self.root_ca_path = root_ca_path
         self.certificate_path = certificate_path
         self.private_key_path = private_key_path
-
-        if not args.client_id:
-            self.client_id = gethostname()
-        else:
-            self.client_id = args.client_id
-
+        self.client_id = client_id
         self.iot_client = None
 
     def publish(self, publish_to_topic, payload):
@@ -96,7 +91,9 @@ def parse_args():
     parser.add_argument("-k", "--key", action="store", dest="private_key_path", required=True,
                         help="Private key file path")
     parser.add_argument("-id", "--client_id", action="store", dest="client_id", required=True,
-                        help="MQTT Client id (Thing Name)")
+                        help="MQTT Client id, used as thing name for metrics, unless one is passed as a parameter")
+    parser.add_argument("-t", "--thing_name", action="store", dest="thing_name", required=False,
+                        help="Thing to publish metrics for. If omitted, client_id is assumed")
     parser.add_argument("-d", "--dryrun", action="store_true", dest="dry_run", default=False,
                         help="Collect and print metrics to console, do not publish them over mqtt")
     parser.add_argument("-i", "--interval", action="store", dest="upload_interval", default=300,
@@ -125,17 +122,29 @@ if __name__ == '__main__':
     args = parse_args()
 
     if not args.dry_run:
+        client_id = ""
+        thing_name = ""
+
+        if not args.client_id:
+            client_id = gethostname()
+        else:
+            client_id = args.client_id
+
+        if not args.thing_name:
+            thing_name = client_id
+        else:
+            thing_name = args.thing_name
+
         iot_client = IoTClientWrapper(args.endpoint, args.root_ca_path,
-                                      args.certificate_path, args.private_key_path, args.client_id)
+                                      args.certificate_path, args.private_key_path, client_id)
         iot_client.connect()
 
         # client_id must match a registered thing name in your account
-        topic = "$aws/things/" + args.client_id + "/defender/metrics/" + args.format
+        topic = "$aws/things/" + thing_name + "/defender/metrics/" + args.format
 
         # Subscribe to the accepted/rejected topics to indicate status of published metrics reports
         iot_client.subscribe(topic + "/accepted", custom_callback)
         iot_client.subscribe(topic + "/rejected", custom_callback)
-
     sample_rate = args.upload_interval
 
     #  Collector samples metrics from the system, it can track the previous metric to generate deltas
