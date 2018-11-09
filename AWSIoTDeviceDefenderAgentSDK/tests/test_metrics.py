@@ -206,10 +206,21 @@ def test_network_stats_delta_calculation(simple_metric):
     m2.add_network_stats(bytes_in=125, packets_in=75,
                          bytes_out=225, packets_out=175)
 
+    m3 = metrics.Metrics(last_metric=m2)
+    m3.timestamp = 10
+    m3.interval = 10
+    m3.add_network_stats(bytes_in=150, packets_in=100,
+                         bytes_out=250, packets_out=200)
+
     assert m2.network_stats['bytes_in'] == 25
     assert m2.network_stats['packets_in'] == 25
     assert m2.network_stats['bytes_out'] == 25
     assert m2.network_stats['packets_out'] == 25
+
+    assert m3.network_stats['bytes_in'] == 25
+    assert m3.network_stats['packets_in'] == 25
+    assert m3.network_stats['bytes_out'] == 25
+    assert m3.network_stats['packets_out'] == 25
 
 
 def test_add_network_connections(simple_metric):

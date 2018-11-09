@@ -59,11 +59,12 @@ class Metrics(object):
         self.listening_udp_ports = []
 
         # Network Stats By Interface
-        self._interface_stats = {}
+        self.total_counts = {}  # The raw values from the system
+        self._interface_stats = {}  # The diff values, if delta metrics are used
         if last_metric is None:
             self._old_interface_stats = {}
         else:
-            self._old_interface_stats = last_metric._interface_stats
+            self._old_interface_stats = last_metric.total_counts
 
         self.max_list_size = 50
 
@@ -121,6 +122,13 @@ class Metrics(object):
         packets_out: int
            Number of packets sent from this interface
         """
+        self.total_counts = {
+            'bytes_in': bytes_in,
+            'bytes_out': bytes_out,
+            'packets_in': packets_in,
+            'packets_out': packets_out
+        }
+
         if self._old_interface_stats:
             bytes_in_diff = bytes_in - self._old_interface_stats[self.t.bytes_in]
             bytes_out_diff = bytes_out - self._old_interface_stats[self.t.bytes_out]
