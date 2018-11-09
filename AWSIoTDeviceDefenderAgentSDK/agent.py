@@ -81,7 +81,7 @@ class IoTClientWrapper(object):
 
 def parse_args():
     """Setup Commandline Argument Parsing"""
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(fromfile_prefix_chars="@")
     parser.add_argument("-e", "--endpoint", action="store", required=True, dest="endpoint",
                         help="Your AWS IoT custom endpoint")
     parser.add_argument("-r", "--rootCA", action="store", dest="root_ca_path", required=True,
