@@ -77,8 +77,8 @@ class Collector(object):
         net_counters = ps.net_io_counters(pernic=False)
         metrics.add_network_stats(
             net_counters.bytes_recv,
-            net_counters.bytes_sent,
             net_counters.packets_recv,
+            net_counters.bytes_sent,
             net_counters.packets_sent)
 
     @staticmethod
