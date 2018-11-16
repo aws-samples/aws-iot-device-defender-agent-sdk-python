@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='AWSIoTDeviceDefenderAgentSDK',
-      version='1.0',
+      version='1.0.1',
       description='AWS IoT Device Defender Agent SDK',
       url='https://github.com/aws-samples/aws-iot-device-defender-agent-sdk-python',
       author='Amazon Web Services',
@@ -19,7 +19,7 @@ setup(name='AWSIoTDeviceDefenderAgentSDK',
           'Natural Language :: English',
           'License :: OSI Approved :: Apache Software License',
           'Programming Language :: Python',
-          'Programming Language :: Python :: 2.6'
+          'Programming Language :: Python :: 2.7'
       ],
       zip_safe=False
       )
