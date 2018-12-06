@@ -11,7 +11,6 @@
 #   express or implied. See the License for the specific language governing
 #   permissions and limitations under the License.
 
-import pytest
 from mock import patch
 from mock import MagicMock
 import psutil
@@ -156,5 +155,5 @@ class TestCollector:
         assert metrics_output.network_connections[4]['local_interface'] == 'em1'
         assert metrics_output.network_connections[4]['local_port'] == 66666
         assert metrics_output.network_connections[5]['remote_addr'] == '11.0.0.7:789'
-        assert metrics_output.network_connections[5]['local_interface'] == None
+        assert metrics_output.network_connections[5]['local_interface'] is None
         assert metrics_output.network_connections[5]['local_port'] == 77777

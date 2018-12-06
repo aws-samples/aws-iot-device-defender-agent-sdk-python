@@ -248,11 +248,6 @@ def test_field_sizes():
     assert len(m.network_stats) == 4
 
 
-def test_tags():
-    t_l = metrics.Tags(False)
-    t_s = metrics.Tags(True)
-
-
 def test_sampled_lists(simple_metric):
     t = metrics.Tags()
     m = metrics.Metrics()
