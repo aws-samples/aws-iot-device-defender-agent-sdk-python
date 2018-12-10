@@ -13,7 +13,7 @@
 
 
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
-from collector import Collector
+from .collector import Collector
 import logging
 import argparse
 from time import sleep
@@ -50,7 +50,7 @@ class IoTClientWrapper(object):
     def connect(self):
         """Connect to AWS IoT"""
         if not self.certificate_path or not self.private_key_path:
-            print "Missing credentials for authentication."
+            print("Missing credentials for authentication.")
             exit(2)
 
         # Configure logging
@@ -108,12 +108,12 @@ def parse_args():
 def custom_callback(self, userdata, message):
     print("Received a new message: ")
     if 'json' in message.topic:
-        print(message.payload)
+        print((message.payload))
     else:
-        print cbor.loads(message.payload)
+        print(cbor.loads(message.payload))
 
         print("from topic: ")
-        print(message.topic)
+        print((message.topic))
         print("--------------\n\n")
 
 
@@ -154,7 +154,7 @@ if __name__ == '__main__':
     while True:
         metric = collector.collect_metrics()
         if args.dry_run:
-            print metric.to_json_string(pretty_print=True)
+            print(metric.to_json_string(pretty_print=True))
             if args.format == 'cbor':
                 with open("cbor_metrics", "w+b") as outfile:
                     outfile.write(bytearray(metric.to_cbor()))

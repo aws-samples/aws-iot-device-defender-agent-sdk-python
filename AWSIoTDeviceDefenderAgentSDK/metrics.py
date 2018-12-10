@@ -16,7 +16,7 @@ import json
 import cbor
 import random
 import os
-from tags import Tags
+from .tags import Tags
 
 
 class Metrics(object):
@@ -79,7 +79,7 @@ class Metrics(object):
         elif protocol.upper() == "TCP":
             return self.listening_tcp_ports
         else:
-            print("Invalid Protocol: " + protocol)
+            print(("Invalid Protocol: " + protocol))
             return []
 
     def add_listening_ports(self, protocol, ports):
@@ -104,7 +104,7 @@ class Metrics(object):
                 if p not in self.listening_tcp_ports:
                     self.listening_tcp_ports += ports
         else:
-            print("Invalid Protocol: " + protocol)
+            print(("Invalid Protocol: " + protocol))
 
     def add_network_stats(self, bytes_in, packets_in, bytes_out, packets_out):
         """
