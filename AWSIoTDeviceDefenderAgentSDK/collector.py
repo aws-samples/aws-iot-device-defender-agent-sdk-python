@@ -14,9 +14,10 @@
 
 import psutil as ps
 import socket
-from metrics import Metrics
+from .metrics import Metrics
 import argparse
 from time import sleep
+from unittest.mock import MagicMock, Mock
 
 
 class Collector(object):
@@ -92,8 +93,8 @@ class Collector(object):
                                                        Collector.__get_interface_name(c.laddr.ip),
                                                        c.laddr.port)
                 except Exception as ex:
-                    print 'Failed to parse network info for protocol: ' + protocol
-                    print ex
+                    print('Failed to parse network info for protocol: ' + protocol)
+                    print(ex)
 
     def collect_metrics(self):
         """Sample system metrics and populate a metrics object suitable for publishing to Device Defender."""
@@ -130,7 +131,7 @@ if __name__ == '__main__':
             count -= 1
             # setup a loop to collect
             metric = collector.collect_metrics()
-            print metric.to_json_string(pretty_print=True)
+            print(metric.to_json_string(pretty_print=True))
 
             if count == 0:
                 break
@@ -143,5 +144,5 @@ if __name__ == '__main__':
         if args.max_list_size:
             metric.max_list_size = int(args.max_list_size)
 
-        print metric.to_json_string(pretty_print=True)
+        print(metric.to_json_string(pretty_print=True))
         exit()

@@ -11,8 +11,8 @@
 #   express or implied. See the License for the specific language governing
 #   permissions and limitations under the License.
 
-from mock import patch
-from mock import MagicMock
+from unittest.mock import patch
+from unittest.mock import MagicMock
 import psutil
 from collections import namedtuple
 import socket
@@ -27,7 +27,7 @@ net_connections_fail_tuple = namedtuple('net_connections_tuple', 'fd family type
 if_addr_tuple = namedtuple('if_addr_tuple', 'family address netmask broadcast ptp')
 
 
-class TestCollector:
+class TestCollector(object):
     def __use_mock_net_if_addrs(self, return_value_input):
         self.net_if_addrs_patcher = patch(PATCH_MODULE_LOCATION_PS + "net_if_addrs", spec=psutil.net_if_addrs)
         self.mock_net_if_addrs_function = self.net_if_addrs_patcher.start()
@@ -90,6 +90,7 @@ class TestCollector:
         a5 = if_addr_tuple(family=socket.AF_INET, address='10.0.0.6', netmask=None, broadcast=None, ptp=None)
         net_dict = {'em1': [a1, a2, a3, a4, a5]}
         return net_dict
+
 
     def test_collector_collect_network_stats(self):
         self.__use_mock_net_connections(self.__setup_net_connections())
