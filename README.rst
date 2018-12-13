@@ -24,7 +24,7 @@ The Following requirements are shared with the `AWS IoT Device SDK for Python <h
 Connect your Device to AWS IoT
 ==============================
 
-If have never connected your device to AWS IoT before, please follow the
+If you have never connected your device to AWS IoT before, please follow the
 `Getting Started with AWS IoT <https://docs.aws.amazon.com/iot/latest/developerguide/iot-gs.html>`_
 Guide. Make sure you note the location of your certificates, you will
 need to provide the location of these to the Device Defender Sample
@@ -96,21 +96,64 @@ Integration follows the standard Greengrass lambda deployment model,
 making it easy to add AWS IoT Device Defender security to your
 Greengrass Core devices.
 
-Prereqs
-=======
+Prerequisites
+=============
 
-#. `Greengrass environment Setup <https://docs.aws.amazon.com/greengrass/latest/developerguide/module1.html>`__
+#. `Greengrass environment setup <https://docs.aws.amazon.com/greengrass/latest/developerguide/module1.html>`__
 #. `Greengrass core configured and running <https://docs.aws.amazon.com/greengrass/latest/developerguide/module2.html>`__
 #. Ensure you can successfully deploy and run a lambda on your core
 
 Using Device Defender with Greengrass Core devices
 ==================================================
 
-Create Your Lambda Package
+You can deploy a Device Defender to your Greengrass core in two ways:
+
+#. Using the pre-built Greengrass Device Defender Connector (*recommended*)
+#. Create a lambda package manually
+
+Using Greengrass Connector
 --------------------------
+The Device Defender Greengrass Connector provides the most streamlined and automated means of deploy the Device Defender agent to your
+Greengrass core, and is the recommended method of using Device Defender with Greengrass.
+
+For detailed information about using Greengrass Connectors see `Getting Started with Greengrass Connectors <https://docs.aws.amazon.com/greengrass/latest/developerguide/connectors-console.html>`__
+For information about configuring the Device Defender Connector see `Device Defender Connector Details <https://docs.aws.amazon.com/greengrass/latest/developerguide/device-defender-connector.html>`__
+
+#. Create a local resource to allow your lambda to collect metrics from the Greengrass Core host
+
+   * Follow the instructions `here <https://docs.aws.amazon.com/greengrass/latest/developerguide/access-local-resources.html>`__
+   * Use the following parameters:
+
+     * **Resource Name:** ``Core_Proc``
+     * **Type:** ``Volume``
+     * **Source Path:** ``/proc``
+     * **Destination Path:** ``/host_proc`` (make sure the same value is configured for the PROCFS_PATH environment variable above)
+     * **Group owner file access permission:** "Automatically add OS group permissions of the Linux group that owns the resource"
+     * Associate the resource with your metrics lambda
+
+#. From the detail page of your Greengrass Group, click "Connectors" in the left-hand menu
+
+#. Click the "Add a Connector" button
+
+#. In the "Select a connector" screen, select the "Device Defender" connector from the list, click "Next"
+
+#. On the "Configure parameters" screen, select the resource you created in Step 1, in the "Resource for /proc" box
+
+#. In the "Metrics reporting interval" box, enter 300, or larger if you wish to use a longer reporting interval
+
+#. Click the "add" button
+
+#. `Deploy your connector to your Greengrass Group <https://docs.aws.amazon.com/greengrass/latest/developerguide/configs-core.html>`__
+
+
+Create Your Lambda Package Manually
+-----------------------------------
 
 For this portion will be following the general process outlined
 `here <https://docs.aws.amazon.com/greengrass/latest/developerguide/create-lambda.html/>`__
+
+**Note:** Due to platform-specific binary extensions in the psutil package, this process should be performed on the platform where you
+plan to deploy your lambda. 
 
 #. Clone the AWS IoT Device Defender Python Samples Repository
 
@@ -151,7 +194,7 @@ For this portion will be following the general process outlined
 
 #. Complete steps 1-4 from this
    `guide <https://docs.aws.amazon.com/greengrass/latest/developerguide/create-lambda.html>`__
-#. Unzip the Greengrass python sdk into your lamda directory
+#. Unzip the Greengrass python sdk into your lambda directory
 
    .. code:: bash
 
@@ -196,7 +239,7 @@ Configure and deploy your Greengrass Lambda
 #. `Configure your lambda as a long-lived lambda <https://docs.aws.amazon.com/greengrass/latest/developerguide/long-lived.html>`__
 #. Configure the following environment variables:
 
-   * **SAMPLE_INTERVAL_SECONDS:** The metrics generation interval. This defaults to 300 seconds
+   * **SAMPLE_INTERVAL_SECONDS:** The metrics generation interval. The default is 300 seconds.
      *Note: 5 minutes (300 seconds) is the shortest reporting interval supported by AWS IoT Device Defender*
    * **PROCFS_PATH:** The destination path that you will configure for your **/proc** resource as shown below.
 
@@ -207,14 +250,14 @@ Configure and deploy your Greengrass Lambda
    * Follow the instructions `here <https://docs.aws.amazon.com/greengrass/latest/developerguide/access-local-resources.html>`__
    * Use the following parameters:
 
-     * **Resource Name:** ``Core Proc``
+     * **Resource Name:** ``Core_Proc``
      * **Type:** ``Volume``
      * **Source Path:** ``/proc``
      * **Destination Path:** ``/host_proc`` (make sure the same value is configured for the PROCFS_PATH environment variable above)
-     * Group owner file access permission: "Automatically add OS group permissions of the Linux group that owns the resource"
+     * **Group owner file access permission:** "Automatically add OS group permissions of the Linux group that owns the resource"
      * Associate the resource with your metrics lambda
 
-#. Deploy your lambda to your Greengrass Group
+#. `Deploy your connector to your Greengrass Group <https://docs.aws.amazon.com/greengrass/latest/developerguide/configs-core.html>`__
 
 Troubleshooting
 ---------------
