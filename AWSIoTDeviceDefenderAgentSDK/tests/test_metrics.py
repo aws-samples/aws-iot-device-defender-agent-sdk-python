@@ -23,14 +23,24 @@ def simple_metric():
     m.add_network_connection("10.10.10.10", 80, "eth0", 9009)
     m.add_network_connection("11.11.11.11", 80, "eth0", 88888)
 
-    m.add_listening_ports("UDP", [{'port': 999, 'interface': 'eth0'},
-                                  {'port': 980, 'interface': 'wlan0'},
-                                  {'port': 9032, 'interface': 'eth0'}])
+    m.add_listening_ports(
+        "UDP",
+        [
+            {"port": 999, "interface": "eth0"},
+            {"port": 980, "interface": "wlan0"},
+            {"port": 9032, "interface": "eth0"},
+        ],
+    )
 
-    m.add_listening_ports("TCP", [{'port': 80, 'interface': 'eth0'},
-                                  {'port': 88, 'interface': 'wlan0'},
-                                  {'port': 8000, 'interface': 'eth0'},
-                                  {'port': 8000, 'interface': 'eth0'}])
+    m.add_listening_ports(
+        "TCP",
+        [
+            {"port": 80, "interface": "eth0"},
+            {"port": 88, "interface": "wlan0"},
+            {"port": 8000, "interface": "eth0"},
+            {"port": 8000, "interface": "eth0"},
+        ],
+    )
 
     return m
 
@@ -43,14 +53,24 @@ def simple_metric_short_names():
     m.add_network_connection("10.10.10.10", 80, "eth0", 9009)
     m.add_network_connection("11.11.11.11", 80, "eth0", 88888)
 
-    m.add_listening_ports("UDP", [{'port': 999, 'interface': 'eth0'},
-                                  {'port': 980, 'interface': 'wlan0'},
-                                  {'port': 9032, 'interface': 'eth0'}])
+    m.add_listening_ports(
+        "UDP",
+        [
+            {"port": 999, "interface": "eth0"},
+            {"port": 980, "interface": "wlan0"},
+            {"port": 9032, "interface": "eth0"},
+        ],
+    )
 
-    m.add_listening_ports("TCP", [{'port': 80, 'interface': 'eth0'},
-                                  {'port': 88, 'interface': 'wlan0'},
-                                  {'port': 8000, 'interface': 'eth0'},
-                                  {'port': 8000, 'interface': 'eth0'}])
+    m.add_listening_ports(
+        "TCP",
+        [
+            {"port": 80, "interface": "eth0"},
+            {"port": 88, "interface": "wlan0"},
+            {"port": 8000, "interface": "eth0"},
+            {"port": 8000, "interface": "eth0"},
+        ],
+    )
 
     return m
 
@@ -132,8 +152,8 @@ def test_v1_sampled_lists(simple_metric):
         simple_metric.add_network_stats(1, 1, 1, 1)
         simple_metric.add_network_connection("a", i, "a", i)
         simple_metric.add_network_connection("a", i, "a", i)
-        simple_metric.add_listening_ports("TCP", [{'port': i}])
-        simple_metric.add_listening_ports("UDP", [{'port': i}])
+        simple_metric.add_listening_ports("TCP", [{"port": i}])
+        simple_metric.add_listening_ports("UDP", [{"port": i}])
 
     report = simple_metric._v1_metrics()
     metric_block = report[t.metrics]
@@ -141,38 +161,59 @@ def test_v1_sampled_lists(simple_metric):
     assert len(metric_block[t.tcp_conn][t.established_connections][t.connections]) == 10
 
     assert metric_block[t.tcp_conn][t.established_connections][t.total] > len(
-        metric_block[t.tcp_conn][t.established_connections])
+        metric_block[t.tcp_conn][t.established_connections]
+    )
 
     assert len(metric_block[t.listening_tcp_ports][t.ports]) == 10
     assert metric_block[t.listening_tcp_ports][t.total] > len(
-        metric_block[t.listening_tcp_ports][t.ports])
+        metric_block[t.listening_tcp_ports][t.ports]
+    )
     assert len(metric_block[t.listening_udp_ports][t.ports]) == 10
     assert metric_block[t.listening_udp_ports][t.total] > len(
-        metric_block[t.listening_udp_ports][t.ports])
+        metric_block[t.listening_udp_ports][t.ports]
+    )
 
 
 def test_listening_ports(simple_metric):
     assert len(simple_metric.listening_tcp_ports) == 4
     assert len(simple_metric.listening_udp_ports) == 3
 
-    if any(p['port'] == 999 and p['interface'] == 'eth0' for p in simple_metric.listening_ports("UDP")):
+    if any(
+        p["port"] == 999 and p["interface"] == "eth0"
+        for p in simple_metric.listening_ports("UDP")
+    ):
         assert True
-    if any(p['port'] == 980 and p['interface'] == 'wlan0' for p in simple_metric.listening_ports("UDP")):
+    if any(
+        p["port"] == 980 and p["interface"] == "wlan0"
+        for p in simple_metric.listening_ports("UDP")
+    ):
         assert True
-    if any(p['port'] == 9032 and p['interface'] == 'eth0' for p in simple_metric.listening_ports("UDP")):
+    if any(
+        p["port"] == 9032 and p["interface"] == "eth0"
+        for p in simple_metric.listening_ports("UDP")
+    ):
         assert True
 
-    if any(p['port'] == 80 and p['interface'] == 'eth0' for p in simple_metric.listening_ports("TCP")):
+    if any(
+        p["port"] == 80 and p["interface"] == "eth0"
+        for p in simple_metric.listening_ports("TCP")
+    ):
         assert True
-    if any(p['port'] == 88 and p['interface'] == 'wlan0' for p in simple_metric.listening_ports("TCP")):
+    if any(
+        p["port"] == 88 and p["interface"] == "wlan0"
+        for p in simple_metric.listening_ports("TCP")
+    ):
         assert True
-    if any(p['port'] == 8000 and p['interface'] == 'eth0' for p in simple_metric.listening_ports("TCP")):
+    if any(
+        p["port"] == 8000 and p["interface"] == "eth0"
+        for p in simple_metric.listening_ports("TCP")
+    ):
         assert True
 
 
 def test_add_listening_ports_dedup(simple_metric):
-    new_tcp_port = [{'port': 80, 'interface': 'eth0'}]
-    new_udp_port = [{'port': 999, 'interface': 'eth0'}]
+    new_tcp_port = [{"port": 80, "interface": "eth0"}]
+    new_udp_port = [{"port": 999, "interface": "eth0"}]
 
     simple_metric.add_listening_ports("TCP", new_tcp_port)
     assert len(simple_metric.listening_tcp_ports) == 4
@@ -183,10 +224,10 @@ def test_add_listening_ports_dedup(simple_metric):
 
 def test_basic_add_network_stats(simple_metric):
     assert len(simple_metric.network_stats) == 4
-    assert simple_metric.network_stats['bytes_in'] == 100
-    assert simple_metric.network_stats['packets_in'] == 50
-    assert simple_metric.network_stats['bytes_out'] == 200
-    assert simple_metric.network_stats['packets_out'] == 150
+    assert simple_metric.network_stats["bytes_in"] == 100
+    assert simple_metric.network_stats["packets_in"] == 50
+    assert simple_metric.network_stats["bytes_out"] == 200
+    assert simple_metric.network_stats["packets_out"] == 150
 
 
 def test_timestamp(simple_metric):
@@ -197,35 +238,32 @@ def test_timestamp(simple_metric):
 def test_network_stats_delta_calculation(simple_metric):
     m1 = metrics.Metrics()
     m1.timestamp = 0
-    m1.add_network_stats(bytes_in=100, packets_in=50,
-                         bytes_out=200, packets_out=150)
+    m1.add_network_stats(bytes_in=100, packets_in=50, bytes_out=200, packets_out=150)
 
     m2 = metrics.Metrics(last_metric=m1)
     m2.timestamp = 10
     m2.interval = 10
-    m2.add_network_stats(bytes_in=125, packets_in=75,
-                         bytes_out=225, packets_out=175)
+    m2.add_network_stats(bytes_in=125, packets_in=75, bytes_out=225, packets_out=175)
 
     m3 = metrics.Metrics(last_metric=m2)
     m3.timestamp = 10
     m3.interval = 10
-    m3.add_network_stats(bytes_in=150, packets_in=100,
-                         bytes_out=250, packets_out=200)
+    m3.add_network_stats(bytes_in=150, packets_in=100, bytes_out=250, packets_out=200)
 
-    assert m2.network_stats['bytes_in'] == 25
-    assert m2.network_stats['packets_in'] == 25
-    assert m2.network_stats['bytes_out'] == 25
-    assert m2.network_stats['packets_out'] == 25
+    assert m2.network_stats["bytes_in"] == 25
+    assert m2.network_stats["packets_in"] == 25
+    assert m2.network_stats["bytes_out"] == 25
+    assert m2.network_stats["packets_out"] == 25
 
-    assert m3.network_stats['bytes_in'] == 25
-    assert m3.network_stats['packets_in'] == 25
-    assert m3.network_stats['bytes_out'] == 25
-    assert m3.network_stats['packets_out'] == 25
+    assert m3.network_stats["bytes_in"] == 25
+    assert m3.network_stats["packets_in"] == 25
+    assert m3.network_stats["bytes_out"] == 25
+    assert m3.network_stats["packets_out"] == 25
 
 
 def test_add_network_connections(simple_metric):
     assert len(simple_metric._net_connections) == 2
-    assert simple_metric._net_connections[0]['remote_addr'] == '10.10.10.10:80'
+    assert simple_metric._net_connections[0]["remote_addr"] == "10.10.10.10:80"
 
 
 def test_add_network_connection_dedup(simple_metric):
