@@ -454,7 +454,7 @@ Short Field Names
 .. code:: javascript
 
     {
-        "h": {
+        "hed": {
             "rid": 1529963534,
             "v": "1.0"
         },
