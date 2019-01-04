@@ -11,12 +11,16 @@
 #   express or implied. See the License for the specific language governing
 #   permissions and limitations under the License.
 from collections import namedtuple
+import sys
 
+if sys.version_info >= (3, 3):
+    from unittest import mock
+else:
+    import mock
+import socket
 import psutil
 import pytest
-from unittest import mock
 from AWSIoTDeviceDefenderAgentSDK import collector
-import socket
 
 PATCH_MODULE_LOCATION_PS = "AWSIoTDeviceDefenderAgentSDK.collector.ps."
 PATCH_MODULE_LOCATION_METRICS = "AWSIoTDeviceDefenderAgentSDK.collector.Metrics."
@@ -185,7 +189,6 @@ def test_collector_listening_ports(
     if_addrs,
     net_io_counters,
 ):
-
     mock_net_connections.return_value = net_connections
     mock_io_counters.return_value = net_io_counters
     mock_if_addrs.return_value = if_addrs
@@ -213,7 +216,6 @@ def test_collector_collect_network_stats(
     if_addrs,
     net_io_counters,
 ):
-
     mock_net_connections.return_value = net_connections
     mock_io_counters.return_value = net_io_counters
     mock_if_addrs.return_value = if_addrs

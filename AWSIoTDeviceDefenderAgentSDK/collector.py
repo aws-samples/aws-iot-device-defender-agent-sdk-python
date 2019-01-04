@@ -17,7 +17,7 @@ import socket
 from .metrics import Metrics
 import argparse
 from time import sleep
-from unittest.mock import MagicMock, Mock
+
 
 
 class Collector(object):
