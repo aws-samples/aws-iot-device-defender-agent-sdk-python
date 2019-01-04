@@ -19,7 +19,6 @@ import argparse
 from time import sleep
 
 
-
 class Collector(object):
     """
     Reads system information and populates a metrics object.

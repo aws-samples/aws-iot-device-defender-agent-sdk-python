@@ -11,17 +11,15 @@
 #   express or implied. See the License for the specific language governing
 #   permissions and limitations under the License.
 from collections import namedtuple
+from AWSIoTDeviceDefenderAgentSDK import collector
 import sys
-
+import socket
+import psutil
+import pytest
 if sys.version_info >= (3, 3):
     from unittest import mock
 else:
     import mock
-import socket
-import psutil
-import pytest
-from AWSIoTDeviceDefenderAgentSDK import collector
-
 PATCH_MODULE_LOCATION_PS = "AWSIoTDeviceDefenderAgentSDK.collector.ps."
 PATCH_MODULE_LOCATION_METRICS = "AWSIoTDeviceDefenderAgentSDK.collector.Metrics."
 
