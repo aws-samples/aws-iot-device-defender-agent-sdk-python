@@ -16,7 +16,7 @@ import json
 import cbor
 import random
 import os
-from .tags import Tags
+from tags import Tags
 
 
 class Metrics(object):
