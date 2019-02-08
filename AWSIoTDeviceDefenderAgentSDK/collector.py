@@ -14,7 +14,7 @@
 
 import psutil as ps
 import socket
-from .metrics import Metrics
+from metrics import Metrics
 import argparse
 from time import sleep
 

@@ -13,7 +13,7 @@
 
 
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
-from .collector import Collector
+from collector import Collector
 import logging
 import argparse
 from time import sleep
