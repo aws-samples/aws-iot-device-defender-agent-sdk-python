@@ -151,6 +151,7 @@ if __name__ == '__main__':
     collector = Collector(args.short_tags)
 
     metric = None
+    first_sample = True  # don't publish first sample, so we can accurately report delta metrics
     while True:
         metric = collector.collect_metrics()
         if args.dry_run:
@@ -159,7 +160,9 @@ if __name__ == '__main__':
                 with open("cbor_metrics", "w+b") as outfile:
                     outfile.write(bytearray(metric.to_cbor()))
         else:
-            if args.format == "cbor":
+            if first_sample:
+                first_sample = False
+            elif args.format == "cbor":
                 iot_client.publish(topic, bytearray(metric.to_cbor()))
             else:
                 iot_client.publish(topic, metric.to_json_string())
