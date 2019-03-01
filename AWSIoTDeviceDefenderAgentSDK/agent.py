@@ -117,7 +117,7 @@ def custom_callback(self, userdata, message):
         print("--------------\n\n")
 
 
-if __name__ == '__main__':
+def main():
     # Read in command-line parameters
     args = parse_args()
 
@@ -168,3 +168,7 @@ if __name__ == '__main__':
                 iot_client.publish(topic, metric.to_json_string())
 
         sleep(float(sample_rate))
+
+
+if __name__ == '__main__':
+    main()
