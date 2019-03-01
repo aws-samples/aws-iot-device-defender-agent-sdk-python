@@ -107,7 +107,7 @@ class Collector(object):
         return metrics_current
 
 
-if __name__ == '__main__':
+def main():
     """Use this method to run the collector in stand-alone mode to test metric collection."""
 
     parser = argparse.ArgumentParser()
@@ -145,3 +145,7 @@ if __name__ == '__main__':
 
         print(metric.to_json_string(pretty_print=True))
         exit()
+
+
+if __name__ == '__main__':
+    main()
