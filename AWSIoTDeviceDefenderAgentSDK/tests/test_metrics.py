@@ -76,7 +76,7 @@ def simple_metric_short_names():
 
 
 def test_v1_metrics_basic_structure_long_names(simple_metric):
-    t = metrics.Tags()
+    t = tags.Tags()
     report = simple_metric._v1_metrics()
 
     # overall structure
@@ -97,7 +97,7 @@ def test_v1_metrics_basic_structure_long_names(simple_metric):
 
 
 def test_v1_metrics_basic_structure_short_names(simple_metric_short_names):
-    t = metrics.Tags(short_names=True)
+    t = tags.Tags(short_names=True)
     report = simple_metric_short_names._v1_metrics()
 
     # Overall Structure
@@ -118,7 +118,7 @@ def test_v1_metrics_basic_structure_short_names(simple_metric_short_names):
 
 
 def test_v1_metrics_optional_elements(simple_metric):
-    t = metrics.Tags(short_names=False)
+    t = tags.Tags(short_names=False)
     report = simple_metric._v1_metrics()
 
     metric_block = report[t.metrics]
@@ -146,7 +146,7 @@ def test_v1_metrics_optional_elements(simple_metric):
 
 def test_v1_sampled_lists(simple_metric):
     simple_metric.max_list_size = 10
-    t = metrics.Tags()
+    t = tags.Tags()
 
     for i in range(1, 20):
         simple_metric.add_network_stats(1, 1, 1, 1)
@@ -287,7 +287,7 @@ def test_field_sizes():
 
 
 def test_sampled_lists(simple_metric):
-    t = metrics.Tags()
+    t = tags.Tags()
     m = metrics.Metrics()
     m.max_list_size = 10
 

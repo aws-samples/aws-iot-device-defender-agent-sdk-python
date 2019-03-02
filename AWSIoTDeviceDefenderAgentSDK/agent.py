@@ -13,7 +13,7 @@
 
 
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
-from collector import Collector
+from AWSIoTDeviceDefenderAgentSDK import collector
 import logging
 import argparse
 from time import sleep
@@ -148,12 +148,12 @@ def main():
     sample_rate = args.upload_interval
 
     #  Collector samples metrics from the system, it can track the previous metric to generate deltas
-    collector = Collector(args.short_tags)
+    coll = collector.Collector(args.short_tags)
 
     metric = None
     first_sample = True  # don't publish first sample, so we can accurately report delta metrics
     while True:
-        metric = collector.collect_metrics()
+        metric = coll.collect_metrics()
         if args.dry_run:
             print(metric.to_json_string(pretty_print=True))
             if args.format == 'cbor':
