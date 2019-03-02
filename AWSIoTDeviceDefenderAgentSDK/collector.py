@@ -14,7 +14,7 @@
 
 import psutil as ps
 import socket
-from metrics import Metrics
+from AWSIoTDeviceDefenderAgentSDK import metrics
 import argparse
 from time import sleep
 
@@ -97,7 +97,8 @@ class Collector(object):
 
     def collect_metrics(self):
         """Sample system metrics and populate a metrics object suitable for publishing to Device Defender."""
-        metrics_current = Metrics(short_names=self._short_names, last_metric=self._last_metric)
+        metrics_current = metrics.Metrics(
+            short_names=self._short_names, last_metric=self._last_metric)
 
         self.network_stats(metrics_current)
         self.listening_ports(metrics_current)
@@ -108,7 +109,7 @@ class Collector(object):
 
 
 def main():
-    """Use this method to run the collector in stand-alone mode to test metric collection."""
+    """Use this method to run the collector in stand-alone mode to tests metric collection."""
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--sample_rate", action="store", dest="sample_rate", required=False,

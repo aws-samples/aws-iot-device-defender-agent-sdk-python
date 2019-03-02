@@ -16,7 +16,7 @@ import json
 import cbor
 import random
 import os
-from tags import Tags
+from AWSIoTDeviceDefenderAgentSDK import tags
 
 
 class Metrics(object):
@@ -45,7 +45,7 @@ class Metrics(object):
         last_metric : Metrics object
                 Metric object used for delta metric calculation.
         """
-        self.t = Tags(short_names)
+        self.t = tags.Tags(short_names)
         # Header Information
         self._timestamp = int(time.time())
         if last_metric is None:
