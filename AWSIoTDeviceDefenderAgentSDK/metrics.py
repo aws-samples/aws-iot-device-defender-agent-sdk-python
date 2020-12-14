@@ -1,4 +1,4 @@
-# Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License").
 #   You may not use this file except in compliance with the License.
@@ -57,6 +57,9 @@ class Metrics(object):
         self._net_connections = []
         self.listening_tcp_ports = []
         self.listening_udp_ports = []
+
+        # Custom Metrics
+        self.cpu_metrics = []
 
         # Network Stats By Interface
         self.total_counts = {}  # The raw values from the system
@@ -167,6 +170,18 @@ class Metrics(object):
         if new_conn not in self._net_connections:
             self._net_connections.append(new_conn)
 
+    def add_cpu_usage(self, cpu_usage):
+        """
+        Add cpu usage detials.
+
+        Parameters
+        ----------
+        cpu_uage: float
+             representing the current system-wide CPU utilization as a percentage
+        """
+        self.cpu_metrics = {"number": cpu_usage}
+
+
     @property
     def network_connections(self):
         return self._net_connections
@@ -235,7 +250,11 @@ class Metrics(object):
         if self.listening_udp_ports:
             metrics[t.listening_udp_ports] = {t.ports: self._sample_list(self.listening_udp_ports),
                                               t.total: len(self.listening_udp_ports)}
+
         report = {t.header: header,
                   t.metrics: metrics}
+
+        if self.cpu_metrics:
+            report[t.custom_metrics] = {t.cpu_usage: [self.cpu_metrics]}
 
         return report

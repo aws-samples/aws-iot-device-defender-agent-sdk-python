@@ -17,8 +17,8 @@ Minimum System Requirements
 
 The Following requirements are shared with the `AWS IoT Device SDK for Python <https://github.com/aws/aws-iot-device-sdk-python>`_
 
--  Python 2.7+ or Python 3.3+ for X.509 certificate-based mutual authentication via port 8883 and MQTT over WebSocket protocol with AWS Signature Version 4 authentication
--  Python 2.7.10+ or Python 3.5+ for X.509 certificate-based mutual authentication via port 443
+-  Python 3.5+ for X.509 certificate-based mutual authentication via port 8883 and MQTT over WebSocket protocol with AWS Signature Version 4 authentication
+-  Python 3.5+ for X.509 certificate-based mutual authentication via port 443
 -  OpenSSL version 1.0.1+ (TLS version 1.2) compiled with the Python executable for X.509 certificate-based mutual authentication
 
 Connect your Device to AWS IoT
@@ -33,7 +33,7 @@ Agent.
 ****************************************
 Notes on the sample agent implementation
 ****************************************
-**client id**: The sample agent requires that the client id provided matches a "thing name" in your AWS IoT account. This only for the sake of making the sample easy to get started with. Device Defender only requires that metrics be published for things that are registered in your account, and does not impose any additional requirements on client id beyond those of the AWS IoT Platform. To customize this behavior, you can modify the way the agent generates the MQTT topic for publishing metrics reports, to use a value other than client id as the thing name portion of the topic.
+**client id**: The sample agent requires a client id that will also be used as the "Thing Name". This only for the sake of making the sample easy to get started with.  To customize this behavior, you can modify the way the agent generates the MQTT topic for publishing metrics reports, to use a value other than client id as the thing name portion of the topic.
 
 **metric selection**: The sample agent attempts to gather all supported Device Defender metrics. Depending on your platform requirements and use case, you may wish to customize your agent to a subset of the metrics.
 
@@ -64,7 +64,7 @@ Running the Sample Agent
 
 .. code:: bash
 
-    python agent.py --endpoint your.custom.endpoint.amazonaws.com  --rootCA /path/to/rootca  --cert /path/to/device/cert --format json -i 300
+    python agent.py --endpoint <your.custom.endpoint.amazonaws.com>  --rootCA </path/to/rootca>  --cert </path/to/cert> --key <path/to/key> --format json -i 300 -id <ThingName>
 
 Command line options
 --------------------
@@ -83,6 +83,31 @@ Test Metrics Collection Locally
 
     python collector.py -n 1 -s 1
 
+Custom Metric Integration
+=========================
+The sample agent has a flag allowing it to publish custom metrics
+
+.. code:: bash
+
+    python agent.py --include-custom-metrics --endpoint <your.custom.endpoint.amazonaws.com>  --rootCA </path/to/rootca>  --cert </path/to/cert> --key <path/to/key> --format json -i 300 -id <ThingName>
+
+This flag will tell the agent to publish the custom metric `cpu_usage`, a `number` float representing the current cpu usage as a percent.  How this looks in the generated report can be seen in the sample report below.
+
+We can run the command seen below to create the `custom_metric` for `cpu_usage`.
+
+.. code:: bash
+
+    aws iot create-custom-metric --metric-name "cpu_usage" --metric-type "number" --client-request-token "access-test" --region us-east-1
+
+After creating this `custom_metric` you will be able to create security profiles that use it.
+
+.. code:: bash
+
+    aws iot create-security-profile \
+    --security-profile-name CpuUsageIssue \
+    --security-profile-description "High-Cpu-Usage"  \
+    --behaviors "[{\"name\":\"great-than-75\",\"metric\":\"cpu_usage\",\"criteria\":{\"comparisonOperator\":\"greater-than\",\"value\":{\"count\":75},\"consecutiveDatapointsToAlarm\":5,\"consecutiveDatapointsToClear\":1}}]" \
+    --region us-east-1
 
 ******************************
 AWS IoT Greengrass Integration
@@ -279,13 +304,15 @@ Metrics Report Details
 Overall Structure
 =================
 
-+-------------+--------------+------------+----------+---------------+--------------------------------------------------+
-| Long Name   | Short Name   | Required   | Type     | Constraints   | Notes                                            |
-+=============+==============+============+==========+===============+==================================================+
-| header      | hed          | Y          | Object   |               | Complete block required for well-formed report   |
-+-------------+--------------+------------+----------+---------------+--------------------------------------------------+
-| metrics     | met          | Y          | Object   |               | Complete block required for well-formed report   |
-+-------------+--------------+------------+----------+---------------+--------------------------------------------------+
++----------------+--------------+------------+----------+---------------+--------------------------------------------------+
+| Long Name      | Short Name   | Required   | Type     | Constraints   | Notes                                            |
++================+==============+============+==========+===============+==================================================+
+| header         | hed          | Y          | Object   |               | Complete block required for well-formed report   |
++----------------+--------------+------------+----------+---------------+--------------------------------------------------+
+| metrics        | met          | Y          | Object   |               | Complete block required for well-formed report   |
++----------------+--------------+------------+----------+---------------+--------------------------------------------------+
+| custom_metrics | cmet         | N          | Object   |               | Complete block required for well-formed report   |
++----------------+--------------+------------+----------+---------------+--------------------------------------------------+
 
 Header Block
 ------------
@@ -378,6 +405,15 @@ Network Stats
 | packets\_out     | po           | network\_stats   | N          | Number   | Delta Metric, >= 0   |         |
 +------------------+--------------+------------------+------------+----------+----------------------+---------+
 
+Custom Metrics
+^^^^^^^^^^^^^^
+
++------------------+--------------+------------------+------------+----------+----------------------+---------+
+| Long Name        | Short Name   | Parent Element   | Required   | Type     | Constraints          | Notes   |
++==================+==============+==================+============+==========+======================+=========+
+| cpu_usage        | cpu          | custom_metrics   | N          | Number   |                      |         |
++------------------+--------------+------------------+------------+----------+----------------------+---------+
+
 Sample Metrics Reports
 ======================
 
@@ -445,6 +481,13 @@ Long Field Names
                     "total": 2
                 }
             }
+        },
+        "custom_metrics": {                                                                                                                                                                                        
+            "cpu_usage": [                                                                                                                                                                                         
+                {                                                                                                                                                                                                  
+                    "number": 26.1                                                                                                                                                                                 
+                }                                                                                                                                                                                                  
+            ]                                                                                                                                                                                                      
         }
     }
 
@@ -512,13 +555,20 @@ Short Field Names
                     "t": 2
                 }
             }
+        },
+        "cmet": {                                                                                                                                                                                        
+            "cpu": [                                                                                                                                                                                         
+                {                                                                                                                                                                                                  
+                    "number": 26.1                                                                                                                                                                                 
+                }                                                                                                                                                                                                  
+            ]                                                                                                                                                                                                      
         }
     }
 
 *****************
 API Documentation
 *****************
-Can you can find the API documentation `here <https://aws-iot-device-defender-agent-sdk.readthedocs.io/en/latest/>`__
+You can find the API documentation `here <https://aws-iot-device-defender-agent-sdk.readthedocs.io/en/latest/>`__
 
 **********
 References

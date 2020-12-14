@@ -1,4 +1,4 @@
-# Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License").
 #   You may not use this file except in compliance with the License.
@@ -38,6 +38,8 @@ class Tags(object):
     PACKETS_IN = ("packets_in", "pi")
     PACKETS_OUT = ("packets_out", "po")
     TOTAL = ("total", "t")
+    CUSTOM_METRICS = ("custom_metrics", "cmet")
+    CPU_USAGE = "cpu_usage"
 
     def __init__(self, short_names=False):
         self.short_names = short_names
@@ -109,10 +111,6 @@ class Tags(object):
         return self.get(self.NETWORK_STATS)
 
     @property
-    def interfaces(self):
-        return self.get(self.INTERFACES)
-
-    @property
     def bytes_in(self):
         return self.get(self.BYTES_IN)
 
@@ -131,3 +129,11 @@ class Tags(object):
     @property
     def total(self):
         return self.get(self.TOTAL)
+
+    @property
+    def cpu_usage(self):
+        return self.CPU_USAGE
+
+    @property
+    def custom_metrics(self):
+        return self.get(self.CUSTOM_METRICS)

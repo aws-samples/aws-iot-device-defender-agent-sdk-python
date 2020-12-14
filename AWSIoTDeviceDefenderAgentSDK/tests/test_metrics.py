@@ -1,4 +1,4 @@
-# Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License").
 #   You may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ def simple_metric():
     m.add_network_stats(bytes_in=100, packets_in=50, bytes_out=200, packets_out=150)
     m.add_network_connection("10.10.10.10", 80, "eth0", 9009)
     m.add_network_connection("11.11.11.11", 80, "eth0", 88888)
+    m.add_cpu_usage(50.5)
 
     m.add_listening_ports(
         "UDP",
@@ -52,6 +53,7 @@ def simple_metric_short_names():
     m.add_network_stats(bytes_in=100, packets_in=50, bytes_out=200, packets_out=150)
     m.add_network_connection("10.10.10.10", 80, "eth0", 9009)
     m.add_network_connection("11.11.11.11", 80, "eth0", 88888)
+    m.add_cpu_usage(50.5)
 
     m.add_listening_ports(
         "UDP",
@@ -82,6 +84,7 @@ def test_v1_metrics_basic_structure_long_names(simple_metric):
     # overall structure
     assert t.header in report
     assert t.metrics in report
+    assert t.custom_metrics in report
 
     # header elements
     header_block = report[t.header]
@@ -94,6 +97,10 @@ def test_v1_metrics_basic_structure_long_names(simple_metric):
     assert t.listening_tcp_ports in metric_block
     assert t.listening_udp_ports in metric_block
     assert t.tcp_conn in metric_block
+
+    # custom_metrics elements
+    custom_metrics = report[t.custom_metrics]
+    assert t.cpu_usage in custom_metrics
 
 
 def test_v1_metrics_basic_structure_short_names(simple_metric_short_names):
@@ -103,6 +110,7 @@ def test_v1_metrics_basic_structure_short_names(simple_metric_short_names):
     # Overall Structure
     assert t.header in report
     assert t.metrics in report
+    assert t.custom_metrics in report
 
     # header elements
     header_block = report[t.header]
@@ -115,6 +123,10 @@ def test_v1_metrics_basic_structure_short_names(simple_metric_short_names):
     assert t.listening_tcp_ports in metric_block
     assert t.listening_udp_ports in metric_block
     assert t.tcp_conn in metric_block
+
+    # custom_metrics elements
+    custom_metrics = report[t.custom_metrics]
+    assert t.cpu_usage in custom_metrics
 
 
 def test_v1_metrics_optional_elements(simple_metric):
@@ -260,6 +272,9 @@ def test_network_stats_delta_calculation(simple_metric):
     assert m3.network_stats["bytes_out"] == 25
     assert m3.network_stats["packets_out"] == 25
 
+def test_add_cpu_usage(simple_metric):
+    assert len(simple_metric.cpu_metrics) == 1
+    assert simple_metric.cpu_metrics["number"] == 50.5
 
 def test_add_network_connections(simple_metric):
     assert len(simple_metric._net_connections) == 2

@@ -1,4 +1,4 @@
-# Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License").
 #   You may not use this file except in compliance with the License.
@@ -27,17 +27,19 @@ class Collector(object):
     to make parsing metrics easier and more cross-platform.
     """
 
-    def __init__(self, short_metrics_names=False):
+    def __init__(self, short_metrics_names=False, use_custom_metrics=True):
         """
         Parameters
         ----------
         short_metrics_names : bool
                 Toggle short object tags in output metrics.
+        use_custom_metrics : bool
+                Toggle whether to collect custom metrics.
         """
-
         # Keep a copy of the last metric, if there is one, so we can calculate change in some metrics.
         self._last_metric = None
         self._short_names = short_metrics_names
+        self._use_custom_metrics = use_custom_metrics
 
     @staticmethod
     def __get_interface_name(address):
@@ -95,6 +97,11 @@ class Collector(object):
                     print('Failed to parse network info for protocol: ' + protocol)
                     print(ex)
 
+    @staticmethod
+    def cpu_usage(metrics):
+        cpu_percent = ps.cpu_percent(interval=None)
+        metrics.add_cpu_usage(cpu_percent)
+
     def collect_metrics(self):
         """Sample system metrics and populate a metrics object suitable for publishing to Device Defender."""
         metrics_current = metrics.Metrics(
@@ -104,9 +111,11 @@ class Collector(object):
         self.listening_ports(metrics_current)
         self.network_connections(metrics_current)
 
+        if self._use_custom_metrics:
+            self.cpu_usage(metrics_current)
+
         self._last_metric = metrics_current
         return metrics_current
-
 
 def main():
     """Use this method to run the collector in stand-alone mode to tests metric collection."""
@@ -121,9 +130,10 @@ def main():
                         help="Lists larger than this size will be sampled")
     parser.add_argument("--short-names", action="store_true", dest="short_names", default=False, required=False,
                         help="Produce metric report with short names")
+    parser.add_argument('-cm','--custom-metrics', action="store_true", dest="custom_metrics", default=False, help="Adds custom metrics to payload.")
 
     args = parser.parse_args()
-    collector = Collector(short_metrics_names=args.short_names)
+    collector = Collector(short_metrics_names=args.short_names,use_custom_metrics=args.custom_metrics)
 
     if args.sample_rate:
         count = int(args.number_samples)
