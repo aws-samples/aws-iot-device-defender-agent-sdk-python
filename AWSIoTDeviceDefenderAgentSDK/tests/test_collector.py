@@ -1,4 +1,4 @@
-# Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License").
 #   You may not use this file except in compliance with the License.
@@ -174,6 +174,19 @@ def net_io_counters():
     )
 
     return fake_snetio
+
+@pytest.fixture()
+def cpu_percent():
+    return 25.65
+
+@mock.patch(PATCH_MODULE_LOCATION_PS + "cpu_percent")
+def test_collector_custom_metrics(mock_cpu_percent,cpu_percent):
+    mock_cpu_percent.return_value = cpu_percent
+
+    new_collector = collector.Collector(short_metrics_names=False, use_custom_metrics=True)
+    metrics_output = new_collector.collect_metrics()
+
+    assert metrics_output.cpu_metrics["number"] == 25.65
 
 
 @mock.patch(PATCH_MODULE_LOCATION_PS + "net_if_addrs")
