@@ -17,6 +17,7 @@ import cbor
 import random
 import os
 from AWSIoTDeviceDefenderAgentSDK import tags
+from ipaddress import ip_address, IPv4Address
 
 
 class Metrics(object):
@@ -163,7 +164,10 @@ class Metrics(object):
         local_port: int
             Local port of the connection
         """
-        new_conn = {self.t.remote_addr: remote_addr + ":" + str(remote_port),
+        ipAddress = remote_addr
+        if type(ip_address(remote_addr)) is not IPv4Address:
+            ipAddress = "[" + remote_addr + "]"
+        new_conn = {self.t.remote_addr: ipAddress + ":" + str(remote_port),
                     self.t.local_interface: interface,
                     self.t.local_port: local_port}
 
