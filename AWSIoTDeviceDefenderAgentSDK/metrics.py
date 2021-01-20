@@ -17,6 +17,7 @@ import cbor
 import random
 import os
 from AWSIoTDeviceDefenderAgentSDK import tags
+from ipaddress import ip_address, IPv4Address
 
 
 class Metrics(object):
