@@ -22,6 +22,7 @@ def simple_metric():
     m.add_network_stats(bytes_in=100, packets_in=50, bytes_out=200, packets_out=150)
     m.add_network_connection("10.10.10.10", 80, "eth0", 9009)
     m.add_network_connection("11.11.11.11", 80, "eth0", 88888)
+    m.add_network_connection("2001:0db8:85a3:0000:0000:8a2e:0370:7334", 80, "eth0", 8080)
     m.add_cpu_usage(50.5)
 
     m.add_listening_ports(
@@ -162,8 +163,8 @@ def test_v1_sampled_lists(simple_metric):
 
     for i in range(1, 20):
         simple_metric.add_network_stats(1, 1, 1, 1)
-        simple_metric.add_network_connection("a", i, "a", i)
-        simple_metric.add_network_connection("a", i, "a", i)
+        simple_metric.add_network_connection("10.0.0.1", i, "a", i)
+        simple_metric.add_network_connection("10.0.0.1", i, "a", i)
         simple_metric.add_listening_ports("TCP", [{"port": i}])
         simple_metric.add_listening_ports("UDP", [{"port": i}])
 
@@ -277,14 +278,16 @@ def test_add_cpu_usage(simple_metric):
     assert simple_metric.cpu_metrics["number"] == 50.5
 
 def test_add_network_connections(simple_metric):
-    assert len(simple_metric._net_connections) == 2
+    assert len(simple_metric._net_connections) == 3
     assert simple_metric._net_connections[0]["remote_addr"] == "10.10.10.10:80"
+    assert simple_metric._net_connections[1]["remote_addr"] == "11.11.11.11:80"
+    assert simple_metric._net_connections[2]["remote_addr"] == "[2001:0db8:85a3:0000:0000:8a2e:0370:7334]:80"
 
 
 def test_add_network_connection_dedup(simple_metric):
-    assert len(simple_metric._net_connections) == 2
+    assert len(simple_metric._net_connections) == 3
     simple_metric.add_network_connection("10.10.10.10", 80, "eth0", 9009)
-    assert len(simple_metric._net_connections) == 2
+    assert len(simple_metric._net_connections) == 3
 
 
 def test_field_sizes():
