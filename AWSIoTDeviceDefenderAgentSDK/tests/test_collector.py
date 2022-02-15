@@ -234,10 +234,7 @@ def test_collector_collect_network_stats(
     new_collector = collector.Collector(short_metrics_names=False)
     metrics_output = new_collector.collect_metrics()
 
-    assert metrics_output.network_stats["bytes_in"] == 10000
-    assert metrics_output.network_stats["packets_in"] == 30000
-    assert metrics_output.network_stats["bytes_out"] == 20000
-    assert metrics_output.network_stats["packets_out"] == 40000
+    assert len(metrics_output.network_stats) == 0
 
 
 @mock.patch(PATCH_MODULE_LOCATION_PS + "net_if_addrs")
