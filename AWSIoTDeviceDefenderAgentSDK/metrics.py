@@ -114,6 +114,7 @@ class Metrics(object):
         """
         Add cumulative network stats across all network interfaces.
         If a previous metrics object was supplied,attempts to calculate and store delta metric.
+        If a previous metrics object is not present, we do not send any metrics.
 
         Parameters
         ----------
@@ -145,9 +146,7 @@ class Metrics(object):
                                      self.t.packets_out: packets_out_diff}
 
         else:
-            self._interface_stats = {self.t.bytes_in: bytes_in, self.t.bytes_out: bytes_out,
-                                     self.t.packets_in: packets_in,
-                                     self.t.packets_out: packets_out}
+            self._interface_stats = {}
 
     def add_network_connection(self, remote_addr, remote_port, interface, local_port):
         """
