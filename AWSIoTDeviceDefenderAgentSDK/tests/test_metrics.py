@@ -94,7 +94,7 @@ def test_v1_metrics_basic_structure_long_names(simple_metric):
 
     metric_block = report[t.metrics]
     # top-level element in metrics block
-    assert t.interface_stats in metric_block
+    assert t.interface_stats not in metric_block
     assert t.listening_tcp_ports in metric_block
     assert t.listening_udp_ports in metric_block
     assert t.tcp_conn in metric_block
@@ -120,7 +120,7 @@ def test_v1_metrics_basic_structure_short_names(simple_metric_short_names):
 
     metric_block = report[t.metrics]
     # top-level element in metrics block
-    assert t.interface_stats in metric_block
+    assert t.interface_stats not in metric_block
     assert t.listening_tcp_ports in metric_block
     assert t.listening_udp_ports in metric_block
     assert t.tcp_conn in metric_block
@@ -136,7 +136,7 @@ def test_v1_metrics_optional_elements(simple_metric):
 
     metric_block = report[t.metrics]
     # top-level element in metrics block
-    assert t.interface_stats in metric_block
+    assert t.interface_stats not in metric_block
     assert t.listening_tcp_ports in metric_block
     assert t.listening_udp_ports in metric_block
     assert t.tcp_conn in metric_block
@@ -235,12 +235,8 @@ def test_add_listening_ports_dedup(simple_metric):
     assert len(simple_metric.listening_udp_ports) == 3
 
 
-def test_basic_add_network_stats(simple_metric):
-    assert len(simple_metric.network_stats) == 4
-    assert simple_metric.network_stats["bytes_in"] == 100
-    assert simple_metric.network_stats["packets_in"] == 50
-    assert simple_metric.network_stats["bytes_out"] == 200
-    assert simple_metric.network_stats["packets_out"] == 150
+def test_initial_network_stat_metrics(simple_metric):
+    assert len(simple_metric.network_stats) == 0
 
 
 def test_timestamp(simple_metric):
@@ -301,7 +297,7 @@ def test_field_sizes():
     assert len(m._net_connections) == 1
     assert len(m.listening_tcp_ports) == 4
     assert len(m.listening_udp_ports) == 3
-    assert len(m.network_stats) == 4
+    assert len(m.network_stats) == 0
 
 
 def test_sampled_lists(simple_metric):
