@@ -5,6 +5,10 @@ AWS IoT Device Defender Agent SDK (Python)
 Example implementation of an AWS IoT Device Defender metrics collection agent,
 and other Device Defender Python samples.
 
+On starting up for the first time - the DD agent publishes the metric values read from the network stats to DD,
+without computing any metric values delta. It does this because when it starts up it does not have any information
+of the previously collected metric values. The side-effect of this is the device's metrics will indicate a large spike each time the device restarts or the agent is restarted which can cause false-positives. Now, we have updated the agent to not send any metrics if it cannot compute the delta.
+
 The provided sample agent can be used as a basis to implement a custom metrics collection agent.
 
 
