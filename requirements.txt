@@ -1,7 +1,7 @@
 awscrt==0.21.1
 awsiotsdk==1.22.0
 cbor==1.0.0
-cbor2==5.4.6
+cbor2==5.8.0
 mock==4.0.3
 psutil==7.0.0
 pytest==8.4.1
